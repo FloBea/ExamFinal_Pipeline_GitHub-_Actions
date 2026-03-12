@@ -50,10 +50,14 @@ def test_create_task_no_title(client):
     assert response.status_code == 400
 
 
-# Dans test_app.py
 def test_get_tasks(client):
-    response = client.get('/')
-    assert response.status_code == 404  # Au lieu de 200, ça va forcer l'échec
+    """Test listing des tâches"""
+    client.post('/tasks', json={"title": "Tache 1"}, content_type='application/json')
+    client.post('/tasks', json={"title": "Tache 2"}, content_type='application/json')
+    response = client.get('/tasks')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['count'] == 2
 
 def test_get_task_by_id(client):
     """Test récupération d'une tâche par ID"""
