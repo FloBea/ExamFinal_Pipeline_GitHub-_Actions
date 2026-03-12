@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: taskflow
+  template:
+    metadata:
+      labels:
+        app: taskflow
+    spec:
+      containers:
+      - name: taskflow
+        image: taskflow:v1
+        imagePullPolicy: Never # Important pour que Minikube utilise ton image locale
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: taskflow-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskflow-service
+spec:
+  selector:
+    app: taskflow
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+    nodePort: 30001 # Port exposé sur Minikube
+  type: NodePort

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    image: taskflow:v1
+    # On laisse un seul 5000 pour que Docker attribue des ports aléatoires (ex: 32768, 32769...)
+    ports:
+      - "5000"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    networks:
+      - taskflow-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: taskflow-db
+    networks:
+      - taskflow-net
+
+networks:
+  taskflow-net:
+    driver: bridge
